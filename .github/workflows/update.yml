@@ -43,6 +43,10 @@ jobs:
           # Only commit if something actually changed (e.g. NSE was unreachable this cycle)
           if ! git diff --cached --quiet; then
             git commit -m "Auto-update dashboard $(date -u +'%Y-%m-%d %H:%M UTC')"
+            # Someone may have pushed a commit (e.g. a manual web edit) after this
+            # run checked out the repo. Rebase onto the latest remote main before
+            # pushing so we don't get rejected - this is what "fetch first" means.
+            git pull --rebase origin main
             git push
           else
             echo "No changes this cycle - nothing to commit."
