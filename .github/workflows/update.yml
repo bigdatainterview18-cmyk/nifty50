@@ -2,11 +2,18 @@ name: Update NIFTY Breadth Dashboard
 
 on:
   schedule:
-    # Every 5 min, 03:00-11:00 UTC = 08:30-16:30 IST, Mon-Fri.
-    # This is a safe buffer around NSE's 09:15-15:30 IST market hours.
+    # Exact NSE market hours: 09:15-15:30 IST = 03:45-10:00 UTC, Mon-Fri.
+    # One cron line per field can't express "start at :45, then every 5 min,
+    # then stop exactly at :00" on its own, so this is split into 3 lines
+    # that together cover exactly that window, every 5 minutes, no buffer:
+    #   03:45, 03:50, 03:55                  -> 09:15, 09:20, 09:25 IST
+    #   every 5 min from 04:00 through 09:55  -> 09:30 IST ... 15:25 IST
+    #   10:00                                 -> 15:30 IST (market close)
     # NOTE: GitHub cron is best-effort - actual runs can slip by a few
     # minutes under GitHub-wide load, especially at the top of the hour.
-    - cron: "*/5 3-11 * * 1-5"
+    - cron: "45,50,55 3 * * 1-5"
+    - cron: "*/5 4-9 * * 1-5"
+    - cron: "0 10 * * 1-5"
   workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab, for testing
 
 permissions:
@@ -19,6 +26,8 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Kolkata   # GitHub runners default to UTC - this makes datetime.now() in the script return IST, matching your local PC
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
