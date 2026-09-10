@@ -1,0 +1,49 @@
+name: Update NIFTY Breadth Dashboard
+
+on:
+  schedule:
+    # Every 5 min, 03:00-11:00 UTC = 08:30-16:30 IST, Mon-Fri.
+    # This is a safe buffer around NSE's 09:15-15:30 IST market hours.
+    # NOTE: GitHub cron is best-effort - actual runs can slip by a few
+    # minutes under GitHub-wide load, especially at the top of the hour.
+    - cron: "*/5 3-11 * * 1-5"
+  workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab, for testing
+
+permissions:
+  contents: write   # needed so this workflow can commit the updated dashboard back to the repo
+
+concurrency:
+  group: nifty-dashboard-update
+  cancel-in-progress: false   # never cancel a run mid-write; let it finish and commit
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Run one fetch + dashboard update cycle
+        working-directory: docs
+        run: python run_ci.py
+
+      - name: Commit and push updated dashboard
+        run: |
+          git config user.name "nifty-breadth-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/nifty_breadth_dashboard.html docs/H1_avg
+          # Only commit if something actually changed (e.g. NSE was unreachable this cycle)
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update dashboard $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          else
+            echo "No changes this cycle - nothing to commit."
+          fi
