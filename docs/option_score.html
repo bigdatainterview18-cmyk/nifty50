@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="600">
+<title>Nifty Option Score</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+          background:#0f172a; color:#e2e8f0; margin:0; padding:24px; }
+  h1 { margin:0 0 4px 0; font-size:22px; }
+  .meta { color:#94a3b8; font-size:13px; margin-bottom:16px; }
+  .error { background:#7c2d12; color:#fed7aa; padding:8px 12px; border-radius:6px;
+            margin-bottom:12px; font-size:13px; }
+  .grid-wrap { overflow:auto; max-height:80vh; max-width:100%; border:1px solid #1e293b; }
+  table { border-collapse:collapse; }
+  th, td { padding:6px 12px; text-align:right; border-bottom:1px solid #1e293b;
+            border-right:1px solid #1e293b; white-space:nowrap; }
+  th { background:#1e293b; color:#cbd5e1; font-size:13px; position:sticky; top:0; z-index:2; }
+  td.strike-col, th:first-child {
+      position:sticky; left:0; z-index:1; background:#0f172a;
+      text-align:left; font-weight:600; color:#e2e8f0;
+  }
+  th:first-child { z-index:3; background:#1e293b; }
+  tr:hover td { background:#1e293b; }
+  tr:hover td.strike-col { background:#1e293b; }
+  .pos { color:#4ade80; font-weight:600; }
+  .neg { color:#f87171; font-weight:600; }
+  .zero { color:#94a3b8; }
+  .badge { display:inline-block; background:#1e293b; padding:2px 8px; border-radius:4px;
+            font-size:12px; color:#93c5fd; margin-left:8px; }
+</style>
+</head>
+<body>
+  <h1>NIFTY Option Score <span class="badge">Open &plusmn; 1000</span></h1>
+  <div class="meta">
+    Open: 23,195.25 &nbsp;|&nbsp; Range: 22,195 &ndash; 24,195
+    &nbsp;|&nbsp; Last updated: 2026-09-17 14:07:04 &nbsp;|&nbsp; Auto-refresh every 10 min
+    <br>Live NSE fetch, checked 2026-09-17 14:07:04
+    <br>Log: /home/runner/work/nifty50/nifty50/docs/option_score/option_score_2026-09-17.csv
+  </div>
+  
+  <div class="grid-wrap">
+    <table>
+      <thead>
+        <tr><th>Strike</th><th>14:07</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="strike-col">22,200</td><td class="zero">0</td></tr>
+<tr><td class="strike-col">22,250</td><td class="pos">6</td></tr>
+<tr><td class="strike-col">22,300</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">22,350</td><td class="pos">3</td></tr>
+<tr><td class="strike-col">22,400</td><td class="neg">-2</td></tr>
+<tr><td class="strike-col">22,450</td><td class="zero">0</td></tr>
+<tr><td class="strike-col">22,500</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">22,550</td><td class="neg">-3</td></tr>
+<tr><td class="strike-col">22,600</td><td class="zero">0</td></tr>
+<tr><td class="strike-col">22,650</td><td class="pos">3</td></tr>
+<tr><td class="strike-col">22,700</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">22,750</td><td class="pos">8</td></tr>
+<tr><td class="strike-col">22,800</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">22,850</td><td class="pos">4</td></tr>
+<tr><td class="strike-col">22,900</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">22,950</td><td class="neg">-3</td></tr>
+<tr><td class="strike-col">23,000</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">23,050</td><td class="neg">-6</td></tr>
+<tr><td class="strike-col">23,100</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">23,150</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">23,200</td><td class="pos">3</td></tr>
+<tr><td class="strike-col">23,250</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">23,300</td><td class="pos">3</td></tr>
+<tr><td class="strike-col">23,350</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">23,400</td><td class="neg">-4</td></tr>
+<tr><td class="strike-col">23,450</td><td class="neg">-2</td></tr>
+<tr><td class="strike-col">23,500</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">23,550</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">23,600</td><td class="neg">-5</td></tr>
+<tr><td class="strike-col">23,650</td><td class="neg">-4</td></tr>
+<tr><td class="strike-col">23,700</td><td class="neg">-4</td></tr>
+<tr><td class="strike-col">23,750</td><td class="neg">-6</td></tr>
+<tr><td class="strike-col">23,800</td><td class="neg">-3</td></tr>
+<tr><td class="strike-col">23,850</td><td class="zero">0</td></tr>
+<tr><td class="strike-col">23,900</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">23,950</td><td class="zero">0</td></tr>
+<tr><td class="strike-col">24,000</td><td class="neg">-1</td></tr>
+<tr><td class="strike-col">24,050</td><td class="neg">-2</td></tr>
+<tr><td class="strike-col">24,100</td><td class="pos">2</td></tr>
+<tr><td class="strike-col">24,150</td><td class="neg">-2</td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
