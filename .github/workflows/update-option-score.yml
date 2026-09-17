@@ -1,0 +1,63 @@
+name: Update NIFTY Option Score Dashboard
+
+on:
+  schedule:
+    # Exact NSE market hours: 09:15-15:30 IST = 03:45-10:00 UTC, Mon-Fri.
+    # Split into 3 lines to cover exactly that window every 10 minutes,
+    # no buffer (same pattern as the breadth tracker's workflow, just at
+    # 10-min spacing instead of 5):
+    #   03:45, 03:55                          -> 09:15, 09:25 IST
+    #   every 10 min from 04:05 through 09:55  -> 09:35 IST ... 15:25 IST
+    #   10:00                                  -> 15:30 IST (market close)
+    # NOTE: GitHub cron is best-effort - actual runs can slip well past the
+    # nominal interval under GitHub-wide load (the breadth tracker's own
+    # "every 5 min" schedule has been landing ~13 min apart on average).
+    - cron: "45,55 3 * * 1-5"
+    - cron: "5,15,25,35,45,55 4-9 * * 1-5"
+    - cron: "0 10 * * 1-5"
+  workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab, for testing
+
+permissions:
+  contents: write   # needed so this workflow can commit the updated dashboard back to the repo
+
+concurrency:
+  group: nifty-option-score-update   # separate from the breadth tracker's group, so neither blocks the other
+  cancel-in-progress: false          # never cancel a run mid-write; let it finish and commit
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Kolkata   # GitHub runners default to UTC - this makes datetime.now() in the script return IST
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run one fetch + dashboard update cycle
+        working-directory: docs
+        run: python nifty_option_score.py --once
+
+      - name: Commit and push updated dashboard
+        run: |
+          git config user.name "nifty-option-score-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/option_score.html docs/option_score
+          # Only commit if something actually changed (e.g. NSE was unreachable this cycle)
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update option score dashboard $(date -u +'%Y-%m-%d %H:%M UTC')"
+            # Someone may have pushed a commit (e.g. the breadth tracker's own
+            # workflow) after this run checked out the repo. Rebase onto the
+            # latest remote main before pushing so we don't get rejected.
+            git pull --rebase origin main
+            git push
+          else
+            echo "No changes this cycle - nothing to commit."
+          fi
