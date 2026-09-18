@@ -2,18 +2,17 @@ name: Update NIFTY Option Score Dashboard
 
 on:
   schedule:
-    # Exact NSE market hours: 09:15-15:30 IST = 03:45-10:00 UTC, Mon-Fri.
-    # Split into 3 lines to cover exactly that window every 10 minutes,
-    # no buffer (same pattern as the breadth tracker's workflow, just at
-    # 10-min spacing instead of 5):
-    #   03:45, 03:55                          -> 09:15, 09:25 IST
-    #   every 10 min from 04:05 through 09:55  -> 09:35 IST ... 15:25 IST
-    #   10:00                                  -> 15:30 IST (market close)
+    # Exact NSE market hours: 09:20-15:30 IST = 03:50-10:00 UTC, Mon-Fri,
+    # every 5 minutes. 09:20 lands on a standard 5-min-aligned UTC minute
+    # (03:50), so this needs only 2 lines instead of 3:
+    #   03:50-03:55 (the two 5-min marks left in hour 3)  -> 09:20, 09:25 IST
+    #   every 5 min from 04:00 through 09:55               -> 09:30 IST ... 15:25 IST
+    #   10:00                                                -> 15:30 IST (market close)
     # NOTE: GitHub cron is best-effort - actual runs can slip well past the
     # nominal interval under GitHub-wide load (the breadth tracker's own
     # "every 5 min" schedule has been landing ~13 min apart on average).
-    - cron: "45,55 3 * * 1-5"
-    - cron: "5,15,25,35,45,55 4-9 * * 1-5"
+    - cron: "50,55 3 * * 1-5"
+    - cron: "*/5 4-9 * * 1-5"
     - cron: "0 10 * * 1-5"
   workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab, for testing
 
